@@ -11,7 +11,7 @@ The site currently represents:
 ## Naming
 
 - Use `Rustzen` for the public brand, website copy, page titles, navigation labels, image alt text, and product ecosystem references.
-- Use `rustzen/rustzen-hub apps/site` for the GitHub repository identifier and `@rustzen/rustzen-hub apps/site` for the package identifier; use lowercase `rustzen-*` only for product names, route/file identifiers, command names, historical prose, and literal URLs.
+- Use `idaibin/rustzen-hub apps/site` for the GitHub repository identifier and `@rustzen/rustzen-hub apps/site` for the package identifier; use lowercase `rustzen-*` only for product names, route/file identifiers, command names, historical prose, and literal URLs.
 - Historical snapshots may retain `Rustzen` when documenting the original naming in old prose. Prefer adding context over rewriting historical wording.
 - The product is `Zen Clear`.
 
@@ -20,15 +20,20 @@ The site currently represents:
 | Source | Role | Fact boundary |
 | --- | --- | --- |
 | `src/data/product.ts` | Product status, description, highlights, proof, download, and purchase copy. | tracked source |
-| `src/pages/index.astro` | Home page composition and high-level product messaging. | tracked source or modified tracked during active design work |
-| `src/pages/checkout/success.astro` | Checkout completion copy after Creem redirects customers back to the site. | tracked source or modified tracked during active design work |
-| `src/layouts/SiteLayout.astro` | Footer, favicon, and baseline metadata. | tracked source or modified tracked during active design work |
+| `src/pages/index.astro` | Home page composition and high-level product messaging. | tracked source |
+| `src/pages/checkout/success.astro` | Checkout completion copy after Creem redirects customers back to the site. | tracked source |
+| `src/layouts/SiteLayout.astro` | Footer, favicon, and baseline metadata. | tracked source |
+| `contracts/entitlements/v1.json` | Approved free/Pro feature IDs and runtime entitlement policy. | authoritative versioned contract in `rustzen-hub` |
+| `rustzen-tools/products/clear` | Desktop behavior, current product implementation, and product-specific development commands. | external source owner; verify before publishing implementation claims |
 | `public/*` | Public images, icons, and fonts. | tracked or untracked until added |
 | `docs/current-site-content.md` | Snapshot from the previous multi-product local site before the Astro rebuild. | documentation snapshot |
 
 ## Product Copy Rules
 
 - Keep product claims tied to current product state.
+- Keep `rustzen-clear` as the stable contract/API product identifier. Do not
+  treat that identifier as the current source-repository path; desktop source
+  ownership is `rustzen-tools/products/clear`.
 - Do not describe platform services as local runtime dependencies for Zen Clear.
 - Do not publish release/update/signing claims that have not been verified in the relevant product repository.
 - Keep route slugs stable unless redirects and navigation are reviewed.
@@ -66,9 +71,9 @@ Before adding SEO features such as Open Graph images, canonical URLs, redirects,
   introduce a separate dark/light product screenshot.
   Keep it aligned with the current Zen Clear app rather than older
   `Disk Cleaner Pro` concept screens.
-- Real GUI media should come from the `rustzen-clear` Tauri development app
-  launched with `just dev-gui`; use CGWindowID window screenshots rather than a
-  browser preview or `/Applications/ZenClear.app`.
+- Real GUI media should come from `rustzen-tools/products/clear`, using that
+  product's documented development command; use CGWindowID window screenshots
+  rather than a browser preview or `/Applications/ZenClear.app`.
 - Screenshots used as docs evidence belong under `docs/screenshots/`.
 - New product media should be reviewed for route usage, alt text, file size, and whether it is tracked or still untracked.
 

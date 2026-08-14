@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { resolvePublishedUpdateManifestUrl } from '@/lib/update-manifest-source';
 import {
   isAllowedUpdateAssetPath,
   resolveUpdateProduct,
   updateBlobOrigin,
-  updateManifestUrl,
   updateProductForAssetPath,
   type UpdateProductConfig,
 } from '@/lib/update-products';
@@ -13,16 +13,24 @@ export const runtime = 'nodejs';
 const MANIFEST_FETCH_TIMEOUT_MS = 8_000;
 const ASSET_CHECK_TIMEOUT_MS = 4_000;
 
+function decodedPathname(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return null;
+  }
+}
+
 type RouteContext = {
-  params: Promise<{ path?: string[] }> | { path?: string[] };
+  params: Promise<{ path?: string[] }>;
 };
 
-async function fetchManifest(product: UpdateProductConfig) {
+async function fetchManifest(url: string) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), MANIFEST_FETCH_TIMEOUT_MS);
 
   try {
-    const response = await fetch(updateManifestUrl(product), {
+    const response = await fetch(url, {
       headers: { accept: 'application/json' },
       cache: 'no-store',
       signal: controller.signal,
@@ -127,6 +135,7 @@ function proxiedDownloadUrl(
   request: NextRequest,
   assetUrl: string,
   product: UpdateProductConfig,
+  blobOrigin: string | null,
 ) {
   let parsed: URL;
   try {
@@ -135,12 +144,13 @@ function proxiedDownloadUrl(
     return null;
   }
 
-  if (parsed.origin !== updateBlobOrigin(product)) {
+  if (!blobOrigin || parsed.origin !== blobOrigin) {
     return parsed;
   }
 
   const pathname = parsed.pathname.replace(/^\/+/, '');
-  if (!isAllowedUpdateAssetPath(pathname, product)) {
+  const decodedPath = decodedPathname(pathname);
+  if (!decodedPath || !isAllowedUpdateAssetPath(decodedPath, product)) {
     return null;
   }
 
@@ -158,9 +168,14 @@ async function redirectToLatest(request: NextRequest) {
     return NextResponse.json({ error: 'unsupported_update_product' }, { status: 404 });
   }
 
+  const manifestUrl = await resolvePublishedUpdateManifestUrl(product);
+  if (!manifestUrl) {
+    return NextResponse.json({ error: 'update_product_not_configured' }, { status: 503 });
+  }
+
   const platform = request.nextUrl.searchParams.get('platform') ?? 'darwin-universal';
   const format = request.nextUrl.searchParams.get('format') ?? 'dmg';
-  const manifest = await fetchManifest(product);
+  const manifest = await fetchManifest(manifestUrl);
   const updaterAssetUrl = latestUpdaterAssetUrl(manifest, platform);
   const dmgAssetUrl =
     latestDownloadAssetUrl(manifest, platform) ??
@@ -175,7 +190,12 @@ async function redirectToLatest(request: NextRequest) {
     return NextResponse.json({ error: 'latest_dmg_asset_not_found' }, { status: 404 });
   }
 
-  const target = proxiedDownloadUrl(request, assetUrl, product);
+  const target = proxiedDownloadUrl(
+    request,
+    assetUrl,
+    product,
+    updateBlobOrigin(product, manifestUrl),
+  );
   if (!target) {
     return NextResponse.json({ error: 'latest_update_asset_not_found' }, { status: 404 });
   }
@@ -193,7 +213,7 @@ async function redirectToLatest(request: NextRequest) {
 }
 
 async function redirectToBlob(request: NextRequest, context: RouteContext) {
-  const params = await Promise.resolve(context.params);
+  const params = await context.params;
   const path = (params.path ?? []).join('/');
 
   if (path === 'latest') {
@@ -205,7 +225,13 @@ async function redirectToBlob(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: 'update_asset_not_found' }, { status: 404 });
   }
 
-  const target = new URL(`${updateBlobOrigin(product)}/${path}`);
+  const manifestUrl = await resolvePublishedUpdateManifestUrl(product);
+  const blobOrigin = updateBlobOrigin(product, manifestUrl);
+  if (!blobOrigin) {
+    return NextResponse.json({ error: 'update_product_not_configured' }, { status: 503 });
+  }
+
+  const target = new URL(`${blobOrigin}/${path}`);
   request.nextUrl.searchParams.forEach((value, key) => {
     target.searchParams.set(key, value);
   });

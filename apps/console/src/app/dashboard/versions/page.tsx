@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import type { AppVersion, Prisma, Product } from '@prisma/client';
 import { ExternalLink, Rocket, Upload } from 'lucide-react';
 import { AdminEmptyState, AdminSection, AdminShell, StatCard } from '@/components/admin/admin-shell';
+import { TauriReleaseUpload } from '@/components/admin/tauri-release-upload';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ import { assertAdminRequestAllowed } from '@/lib/admin-security';
 import { hasAdminSession } from '@/lib/auth';
 import { publicRuntimeError } from '@/lib/error-message';
 import { prisma } from '@/lib/prisma';
+import { listUpdateProducts } from '@/lib/update-products';
 
 type VersionRow = Prisma.AppVersionGetPayload<{
   include: { product: true };
@@ -44,6 +46,10 @@ async function publishVersion(formData: FormData) {
   const platform = String(formData.get('platform') ?? 'macos');
   const downloadUrl = String(formData.get('downloadUrl') ?? '');
   const notes = String(formData.get('notes') ?? '');
+
+  if (platform === 'tauri-updater') {
+    throw new Error('Use the signed Tauri release upload to publish updater metadata');
+  }
 
   const product = await prisma.product.findUnique({ where: { code: productCode } });
   if (!product) throw new Error('Product not found');
@@ -114,9 +120,9 @@ export default async function VersionsPage() {
     >
       <div className="space-y-6">
         {loadError ? (
-          <Alert className="border-destructive/30 bg-red-50 text-red-900">
+          <Alert className="border-destructive/30 bg-destructive/5 text-destructive">
             <AlertTitle>Database read failed</AlertTitle>
-            <AlertDescription className="text-red-800">{loadError}</AlertDescription>
+            <AlertDescription className="text-destructive/80">{loadError}</AlertDescription>
           </Alert>
         ) : null}
 
@@ -126,7 +132,16 @@ export default async function VersionsPage() {
           <StatCard title="Latest version" value={latestVersion(versions)} description="Most recently published row" icon={<Upload className="h-4 w-4" />} />
         </div>
 
-        <AdminSection title="Publish version" description="Create or update release metadata for a product and platform.">
+        <AdminSection
+          title="Upload signed Tauri release"
+          description="Upload signed updater artifacts directly to Blob, publish the latest manifest, and activate automatic update checks."
+        >
+          <TauriReleaseUpload
+            products={listUpdateProducts().map(({ code, name }) => ({ code, name }))}
+          />
+        </AdminSection>
+
+        <AdminSection title="Publish metadata only" description="Create or update release metadata without uploading updater artifacts.">
           <form action={publishVersion} className="grid gap-4 xl:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="product">Product</Label>

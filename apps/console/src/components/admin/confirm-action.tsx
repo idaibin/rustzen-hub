@@ -2,6 +2,7 @@
 
 import { useTransition, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { DialogSurface } from '@/components/ui/dialog';
 
 export type ServerAction = (formData: FormData) => Promise<void>;
 
@@ -51,26 +52,24 @@ export function ConfirmAction({
       </Button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-          <button
-            type="button"
-            aria-label={cancelLabel}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={() => !pending && setOpen(false)}
-          />
-          <div className="relative w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl">
-            <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-            <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" size="sm" type="button" onClick={() => setOpen(false)} disabled={pending}>
-                {cancelLabel}
-              </Button>
-              <Button variant={destructive ? 'destructive' : 'default'} size="sm" type="button" onClick={confirm} disabled={pending}>
-                {pending ? 'Working…' : confirmLabel}
-              </Button>
-            </div>
+        <DialogSurface
+          title={title}
+          description={description}
+          closeDisabled={pending}
+          closeLabel={cancelLabel}
+          onClose={() => setOpen(false)}
+          showCloseButton={false}
+          size="md"
+        >
+          <div className="flex justify-end gap-2 p-5">
+            <Button variant="outline" size="sm" type="button" onClick={() => setOpen(false)} disabled={pending}>
+              {cancelLabel}
+            </Button>
+            <Button variant={destructive ? 'destructive' : 'default'} size="sm" type="button" onClick={confirm} disabled={pending}>
+              {pending ? 'Working…' : confirmLabel}
+            </Button>
           </div>
-        </div>
+        </DialogSurface>
       ) : null}
     </>
   );

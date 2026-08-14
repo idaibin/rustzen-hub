@@ -50,16 +50,16 @@ const switchLabel = other === 'zh' ? '中文' : 'EN';
     }
 
     <div class="nav-dropdown" data-dropdown>
-      <button type="button" aria-haspopup="true" aria-expanded="false" data-dropdown-trigger>
+      <button type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="policies-menu" data-dropdown-trigger>
         <span>{pick(locale, 'Policies', '政策')}</span>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
-      <div class="menu" role="menu">
+      <div class="menu" id="policies-menu" role="menu" aria-label={pick(locale, 'Policies', '政策')}>
         {
           policies.map((p) => (
-            <a href={p.href} role="menuitem">
+            <a href={p.href} role="menuitem" tabindex="-1">
               {pick(locale, p.en, p.zh)}
             </a>
           ))

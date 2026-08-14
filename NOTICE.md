@@ -7,10 +7,11 @@ product names, logos, domains, package publishing channels, hosted services,
 sponsorship channels, and commercial offerings are reserved to Bruce Dai or a
 future designated legal entity.
 
-Public repository content is shared for transparency and community use. Unless a
-repository includes a separate `LICENSE` file or an explicit license statement,
-no blanket open-source license is granted for code, design assets, brand assets,
-or commercial distribution.
+Repository material is governed by [LICENSE.md](./LICENSE.md) and is proprietary
+unless a file or directory explicitly states otherwise. Public visibility does
+not grant an open-source license for code, design assets, brand assets, hosted
+services, authorization contracts, or commercial distribution.
 
-Third-party contributions are accepted only under the license terms stated in the
-target repository, or under a separate written agreement when one is required.
+Third-party components remain governed by their original licenses. Contributions
+require a separate written agreement unless the contribution request explicitly
+states different terms.

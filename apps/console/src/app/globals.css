@@ -2,7 +2,7 @@
 
 /* =========================================================================
    Rustzen Design System — "Zen Blue Glass"
-   Shared token contract (see docs/design-system.md). Migrated from the default
+   Runtime adapter for the repository-root DESIGN.md. Migrated from the default
    shadcn slate palette to the brand system: brand-blue accents, glass cards, and
    a deep zen-navy glass sidebar.
    ========================================================================= */
@@ -21,10 +21,26 @@
   --brand-800: #244783;
   --brand-900: #1b2f56;
 
+  /* Shared semantic neutrals */
+  --ink: #2f3e58;
+  --ink-2: #60708a;
+  --ink-3: #8391a7;
+  --ink-4: #a7b5c8;
+  --line: #e3edfd;
+  --panel: #eef4fe;
+  --paper: #f7faff;
+  --surface: #ffffff;
+
   /* Safety semantics */
   --safe: #3f7fd9;
+  --safe-foreground: #2f63b0;
+  --safe-soft: rgba(119, 168, 247, 0.16);
   --caution: #b58221;
+  --caution-foreground: #8a5d0f;
+  --caution-soft: rgba(181, 130, 33, 0.14);
   --danger: #e85a5a;
+  --danger-foreground: #bd3f3f;
+  --danger-soft: rgba(232, 90, 90, 0.12);
 
   /* Glass tiers + ambient */
   --glass-1-bg: rgba(255, 255, 255, 0.78);
@@ -33,24 +49,34 @@
   --glass-2-bg: rgba(255, 255, 255, 0.7);
   --glass-2-blur: 20px;
   --glass-2-border: rgba(119, 168, 247, 0.24);
+  --glass-3-bg: rgba(238, 244, 254, 0.82);
+  --glass-3-blur: 18px;
+  --glass-3-border: rgba(119, 168, 247, 0.2);
+  --ambient-a: rgba(211, 231, 253, 0.72);
+  --ambient-b: rgba(168, 203, 251, 0.38);
+  --motion-fast: 140ms;
+  --motion-base: 220ms;
+  --motion-slow: 320ms;
+  --ease-standard: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
 
   /* shadcn tokens mapped onto the brand system */
-  --background: #f7faff;
-  --foreground: #2f3e58;
-  --card: #ffffff;
-  --card-foreground: #2f3e58;
-  --popover: #ffffff;
-  --popover-foreground: #2f3e58;
-  --primary: #2f3e58; /* ink — not dead black */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink); /* ink — not dead black */
   --primary-foreground: #ffffff;
   --secondary: #e3edfd; /* brand-100 */
   --secondary-foreground: #244783; /* brand-800 */
   --muted: #eef2f7;
-  --muted-foreground: #60708a;
+  --muted-foreground: var(--ink-2);
   --accent: #e3edfd; /* was teal — now brand-100 */
   --accent-foreground: #2f63b0; /* brand-700 */
   --destructive: #e85a5a; /* = danger */
-  --border: #e3edfd;
+  --border: var(--line);
   --input: #cfdcf2;
   --ring: #3f7fd9; /* brand-600 */
   --radius: 14px; /* was 8px — softer */
@@ -76,12 +102,20 @@
 
 .dark {
   color-scheme: dark;
-  --background: #0c1426;
-  --foreground: #e8eef9;
-  --card: #111c36;
-  --card-foreground: #e8eef9;
-  --popover: #111c36;
-  --popover-foreground: #e8eef9;
+  --paper: #0c1426;
+  --panel: #0f1830;
+  --surface: #111c36;
+  --ink: #e8eef9;
+  --ink-2: #aebbd2;
+  --ink-3: #8595ad;
+  --ink-4: #5e6c84;
+  --line: rgba(119, 168, 247, 0.16);
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
   --primary: #e8eef9;
   --primary-foreground: #0c1426;
   --secondary: rgba(119, 168, 247, 0.14);
@@ -91,13 +125,19 @@
   --accent: rgba(119, 168, 247, 0.16);
   --accent-foreground: #d3e7fd;
   --destructive: #ff8a8a;
-  --border: rgba(119, 168, 247, 0.16);
+  --safe-foreground: #8dbbff;
+  --caution-foreground: #f2c96d;
+  --danger-foreground: #ffaaaa;
+  --border: var(--line);
   --input: rgba(119, 168, 247, 0.24);
   --ring: #77a8f7;
   --glass-1-bg: rgba(255, 255, 255, 0.05);
   --glass-1-border: rgba(119, 168, 247, 0.2);
   --glass-2-bg: rgba(255, 255, 255, 0.04);
   --glass-2-border: rgba(119, 168, 247, 0.14);
+  --glass-3-bg: rgba(255, 255, 255, 0.03);
+  --ambient-a: rgba(47, 99, 176, 0.3);
+  --ambient-b: rgba(31, 48, 86, 0.5);
   /* sidebar already dark — nudges to match the canvas */
   --sidebar: #0a1120;
   --sidebar-border: rgba(119, 168, 247, 0.12);
@@ -142,8 +182,11 @@
   --color-brand-800: var(--brand-800);
   --color-brand-900: var(--brand-900);
   --color-safe: var(--safe);
+  --color-safe-foreground: var(--safe-foreground);
   --color-caution: var(--caution);
+  --color-caution-foreground: var(--caution-foreground);
   --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: var(--radius);

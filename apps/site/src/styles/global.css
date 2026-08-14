@@ -16,7 +16,7 @@
 
 /* =========================================================================
    Rustzen Design System — "Zen Blue Glass"
-   Shared token contract (see docs/design-system.md). The legacy variable names
+   Runtime adapter for the repository-root DESIGN.md. The legacy variable names
    below (--brand, --charcoal, --clear-*, etc.) are KEPT and remapped onto the
    new brand scale so every existing page keeps working unchanged.
    ========================================================================= */
@@ -407,6 +407,18 @@ img {
   border: 1px solid var(--glass-1-border);
 }
 
+.button.ghost {
+  color: var(--brand-700);
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.button.ghost:hover,
+.button.ghost:focus-visible {
+  background: var(--glass-3-bg);
+  border-color: var(--glass-3-border);
+}
+
 /* glass surfaces (new) */
 .glass {
   background: var(--glass-1-bg);
@@ -418,6 +430,11 @@ img {
   background: var(--glass-2-bg);
   backdrop-filter: blur(var(--glass-2-blur));
   border: 1px solid var(--glass-2-border);
+}
+.glass-3 {
+  background: var(--glass-3-bg);
+  backdrop-filter: blur(var(--glass-3-blur));
+  border: 1px solid var(--glass-3-border);
 }
 
 /* safety chips (new) */
@@ -480,6 +497,26 @@ img {
 }
 
 @media (max-width: 720px) {
+  .site-header {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-block: 12px;
+  }
+
+  .site-nav {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .site-nav a,
+  .site-nav button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
   .site-footer {
     align-items: flex-start;
     flex-direction: column;

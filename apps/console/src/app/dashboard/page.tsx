@@ -59,6 +59,8 @@ const apiEndpoints = [
   ['POST', '/api/licenses/deactivate', 'Deactivate a bound device.'],
   ['GET', '/api/licenses/health', 'Check Prisma-backed license API health.'],
   ['GET', '/api/versions?product=rustzen-clear', 'Read release metadata.'],
+  ['GET', '/api/updates/check?product=<code>', 'Read a product-isolated Tauri updater feed.'],
+  ['POST', '/api/releases/publish', 'Activate an authenticated signed updater release.'],
   ['POST', '/api/webhooks/lemonsqueezy', 'Consume billing webhooks.'],
 ];
 

@@ -1,9 +1,10 @@
 import { redirect } from 'next/navigation';
 import { KeyRound, LogIn, ShieldCheck } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ThemeToggle } from '@/components/admin/theme-toggle';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { assertAdminRequestAllowed } from '@/lib/admin-security';
@@ -51,9 +52,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <Badge className="border-sidebar-border bg-sidebar-accent text-sidebar-foreground" variant="outline">
             Production admin
           </Badge>
-          <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-normal">
+          <p className="mt-5 text-4xl font-semibold leading-tight tracking-normal">
             Licensing, devices, and releases in one operations surface.
-          </h1>
+          </p>
           <p className="mt-5 text-sm leading-6 text-sidebar-foreground/64">
             Sign in to manage Rustzen desktop product metadata while client private data remains local.
           </p>
@@ -71,7 +72,10 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
       </section>
 
-      <section className="flex min-h-screen items-center justify-center px-5 py-8">
+      <section className="relative flex min-h-screen items-center justify-center px-5 py-8">
+        <div className="absolute right-5 top-5">
+          <ThemeToggle />
+        </div>
         <div className="w-full max-w-md">
           <div className="mb-6 flex items-center gap-3 lg:hidden">
             <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">
@@ -86,16 +90,16 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <Card>
             <CardHeader>
               <Badge className="w-fit" variant="secondary">Secure access</Badge>
-              <CardTitle className="mt-3 text-2xl">Admin sign in</CardTitle>
+              <h1 className="mt-3 text-2xl font-semibold leading-none tracking-normal">Admin sign in</h1>
               <CardDescription>
                 Use the configured admin credentials for this deployment.
               </CardDescription>
             </CardHeader>
             <CardContent>
               {params.error ? (
-                <Alert className="mb-5 border-destructive/30 bg-red-50 text-red-900">
+                <Alert className="mb-5 border-destructive/30 bg-destructive/5 text-destructive">
                   <AlertTitle>Sign in failed</AlertTitle>
-                  <AlertDescription className="text-red-800">Invalid username or password.</AlertDescription>
+                  <AlertDescription className="text-destructive/80">Invalid username or password.</AlertDescription>
                 </Alert>
               ) : null}
 

@@ -11,8 +11,8 @@ export function Alert({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
   );
 }
 
-export function AlertTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h5 className={cn('mb-1 font-medium leading-none tracking-normal', className)} {...props} />;
+export function AlertTitle({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('mb-1 font-medium leading-none tracking-normal', className)} {...props} />;
 }
 
 export function AlertDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {

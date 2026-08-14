@@ -6,6 +6,7 @@ import { LicenseCreateDialog } from '@/components/admin/license-create-dialog';
 import { AdminSection, AdminShell, StatCard } from '@/components/admin/admin-shell';
 import { DevicesTable, type DeviceRowDTO } from '@/components/admin/devices-table';
 import { LicensesTable, type LicenseRowDTO } from '@/components/admin/licenses-table';
+import { effectiveLicenseStatus } from '@/components/admin/license-status';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { assertAdminRequestAllowed } from '@/lib/admin-security';
 import { hasAdminSession } from '@/lib/auth';
@@ -150,14 +151,6 @@ function fmtDateTimeLocalInput(value: Date | null) {
   return localTime.toISOString().slice(0, 16);
 }
 
-function effectiveLicenseStatus(license: LicenseRow): LicenseStatus {
-  if (license.status === 'ACTIVE' && license.expiresAt && license.expiresAt.getTime() <= Date.now()) {
-    return 'EXPIRED';
-  }
-
-  return license.status;
-}
-
 async function loadLicenseData(): Promise<LicenseData> {
   try {
     const [products, licenses] = await Promise.all([
@@ -191,6 +184,7 @@ export default async function LicensesPage() {
     provider: license.provider ?? '-',
     order: license.providerOrderId ?? '-',
     usage: `${license.devices.length}/${license.maxDevices}`,
+    usedDevices: license.devices.length,
     maxDevices: license.maxDevices,
     expires: fmtDate(license.expiresAt),
     expiresAtInput: fmtDateTimeLocalInput(license.expiresAt),
@@ -206,8 +200,9 @@ export default async function LicensesPage() {
       deviceName: device.deviceName || '-',
       licenseKey: license.licenseKey,
       productName: license.product.name,
-      status: license.status,
+      status: effectiveLicenseStatus(license),
       usage: `${license.devices.length}/${license.maxDevices}`,
+      usedDevices: license.devices.length,
       appVersion: device.appVersion || '-',
       activated: fmtDateTime(device.activatedAt),
       activatedSort: iso(device.activatedAt),

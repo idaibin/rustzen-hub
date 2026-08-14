@@ -42,8 +42,8 @@ From `.env.example`:
 | Admin auth | `RUSTZEN_ADMIN_USERNAME`, `RUSTZEN_ADMIN_PASSWORD`, `RUSTZEN_ADMIN_SECRET`, `RUSTZEN_ADMIN_API_TOKEN` | Dashboard credential handling, session signing, and operational API access |
 | License/webhook | `LICENSE_JWT_SECRET`, `LEMONSQUEEZY_WEBHOOK_SECRET`, `CREEM_WEBHOOK_SECRET` | `LICENSE_JWT_SECRET` signs opaque license bearer tokens and is required in production; webhook secrets verify provider HMAC signatures |
 | Billing checkout | `CREEM_API_KEY`, `CREEM_RUSTZEN_CLEAR_PRODUCT_ID`, `CREEM_CHECKOUT_SUCCESS_URL` | Rustzen Clear Pro checkout and subscription fulfillment; live product identifierentifiers must be configured through deployment secrets |
-| Zen Clear updater/downloads | `RUSTZEN_CLEAR_UPDATE_MANIFEST_URL`, `RUSTZEN_CLEAR_UPDATE_BLOB_ORIGIN` | Manifest source and optional Blob origin allow-list for rewriting update asset URLs through `/api/updates/download`; `/api/updates/download/latest` resolves the current DMG for manual downloads, while `format=updater` resolves the updater archive |
-| Rustzen Clipboard updater/downloads | `RUSTZEN_CLIPBOARD_UPDATE_MANIFEST_URL`, `RUSTZEN_CLIPBOARD_UPDATE_BLOB_ORIGIN` | Clipboard-specific manifest source and Blob origin allow-list; callers must use `product=rustzen-clipboard`, and assets remain under the `rustzen-clipboard/releases/` prefix |
+| Product updater/downloads | `RUSTZEN_CLEAR_UPDATE_*`, `RUSTZEN_CLIPBOARD_UPDATE_*`, `RUSTZEN_ZIPPER_UPDATE_*` | Product-specific static fallback feeds and optional Blob origin allow-lists; a dashboard-published `tauri-updater` record takes precedence |
+| Release uploads | `BLOB_READ_WRITE_TOKEN` | Public Blob store token used only by authenticated short-lived client-upload token exchange, server-side artifact verification, and immutable version-manifest publication; never expose it to the browser or commit it |
 | Legacy license proxy | `RUSTZEN_LICENSE_SERVER_URL`, `RUSTZEN_LICENSE_SERVER_TOKEN` | Optional external license-server compatibility path, not the default desktop-client API |
 
 The intended production domains are `https://console.rustzen.dev` for the
@@ -95,7 +95,9 @@ Before any deploy:
    Node runtime.
 8. Confirm live billing product configuration in the provider dashboard without
    copying live identifiers into repository files.
-9. Record verification evidence in the task report.
+9. For updater uploads, confirm the Blob store is public and test one signed
+   old-to-new client update for each product without reusing signing keys.
+10. Record verification evidence in the task report.
 
 `npm run db:push` against production, production Vercel deploys, and real webhook
 testing require explicit user approval.
@@ -122,3 +124,5 @@ testing require explicit user approval.
 - Billing webhook delivery and live product configuration.
 - Lemon Squeezy webhook delivery for the legacy route.
 - Desktop client consumption of activation or version routes.
+- Authenticated Blob client uploads and installed old-to-new update/restart for
+  Clipboard and Zipper.

@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Pencil, X } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { DialogSurface } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
@@ -21,8 +22,12 @@ type LicenseEditDialogProps = {
   updateLicense: ServerAction;
 };
 
-function SubmitButton() {
+function SubmitButton({ onPendingChange }: { onPendingChange: (pending: boolean) => void }) {
   const { pending } = useFormStatus();
+
+  useEffect(() => {
+    onPendingChange(pending);
+  }, [onPendingChange, pending]);
 
   return (
     <Button type="submit" disabled={pending}>
@@ -34,6 +39,7 @@ function SubmitButton() {
 
 export function LicenseEditDialog({ license, updateLicense }: LicenseEditDialogProps) {
   const [open, setOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const isRevoked = license.rawStatus === 'REVOKED';
 
   return (
@@ -44,27 +50,18 @@ export function LicenseEditDialog({ license, updateLicense }: LicenseEditDialogP
       </Button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4 py-6">
-          <div className="w-full max-w-2xl rounded-lg border border-border bg-card text-card-foreground shadow-xl">
-            <div className="flex items-start justify-between gap-4 border-b border-border p-5">
-              <div className="min-w-0">
-                <h2 className="text-lg font-semibold tracking-normal">Edit license</h2>
-                <p className="mt-1 break-all font-mono text-xs leading-6 text-muted-foreground">
-                  {license.key}
-                </p>
-              </div>
-              <Button
-                aria-label="Close edit license dialog"
-                size="icon"
-                type="button"
-                variant="ghost"
-                onClick={() => setOpen(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <form action={updateLicense} className="grid gap-4 p-5 sm:grid-cols-2">
+        <DialogSurface
+          title="Edit license"
+          description={<span className="break-all font-mono text-xs">{license.key}</span>}
+          closeLabel="Close edit license dialog"
+          closeDisabled={submitting}
+          onClose={() => setOpen(false)}
+        >
+          <form
+            action={updateLicense}
+            className="grid gap-4 p-5 sm:grid-cols-2"
+            onSubmit={() => setSubmitting(true)}
+          >
               <input type="hidden" name="id" value={license.id} />
 
               <div className="space-y-2">
@@ -121,14 +118,13 @@ export function LicenseEditDialog({ license, updateLicense }: LicenseEditDialogP
               </p>
 
               <div className="flex justify-end gap-2 border-t border-border pt-4 sm:col-span-2">
-                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={submitting}>
                   Cancel
                 </Button>
-                <SubmitButton />
+                <SubmitButton onPendingChange={setSubmitting} />
               </div>
-            </form>
-          </div>
-        </div>
+          </form>
+        </DialogSurface>
       ) : null}
     </>
   );

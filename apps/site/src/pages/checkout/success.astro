@@ -7,7 +7,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
   description="Your Rustzen checkout has completed."
 >
   <main class="checkout-success">
-    <section>
+    <section class="glass">
       <p class="eyebrow">Checkout complete</p>
       <h1>Activate Zen Clear Pro.</h1>
       <p>
@@ -47,11 +47,12 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
     display: grid;
     place-items: center;
     padding: clamp(54px, 9vw, 128px) clamp(20px, 5vw, 72px);
-    background: linear-gradient(135deg, #ffffff 0%, var(--clear-panel) 58%, var(--paper) 100%);
+    background: linear-gradient(135deg, var(--surface) 0%, var(--clear-panel) 58%, var(--paper) 100%);
   }
 
   .checkout-success section {
     max-width: 760px;
+    padding: clamp(28px, 5vw, 52px);
     text-align: left;
   }
 
@@ -75,9 +76,4 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
     gap: 12px;
   }
 
-  .button.secondary {
-    background: #ffffff;
-    color: var(--charcoal);
-    border: 1px solid var(--line);
-  }
 </style>

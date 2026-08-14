@@ -20,7 +20,7 @@ const {
   ...rest
 } = Astro.props;
 
-const cls = ['button', variant === 'ghost' ? 'secondary' : variant, className]
+const cls = ['button', variant, className]
   .filter(Boolean)
   .join(' ');
 ---

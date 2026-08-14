@@ -1,57 +1,35 @@
 # apps/site Architecture
 
-## Classification
+`apps/site` is the Astro static public website. The repository root
+[`docs/repo-map/README.md`](../../../docs/repo-map/README.md) owns cross-app routing;
+this file owns only the site boundary.
 
-`apps/site` is the Rustzen product site. It publishes the Zen Clear product page and Creem checkout return at `rustzen.dev`. It is not a Rust backend, Web admin dashboard, Tauri client, or release bundle project.
+## Stack and owners
 
-## Stack
+- Astro 7 static output; `src/pages` is the route-registration authority.
+- `src/layouts/SiteLayout.astro` owns document chrome and metadata.
+- `src/components` owns reusable Astro composition.
+- `src/data/product.ts` owns product/download facts; `src/i18n.ts` owns shared
+  bilingual labels.
+- `src/styles/global.css` adapts root [`DESIGN.md`](../../../DESIGN.md) semantics.
+- `public` owns static assets; `.astro` and `dist` are generated.
 
-- Astro static output (`astro.config.mjs` sets `output: 'static'`).
-- TypeScript data module for product metadata.
-- Vercel static deployment using `vercel.json`.
+## Current route families
 
-## Source Layout
+- Public/product: `/`, `/products`, `/products/clear`, `/pricing`, `/download`.
+- Information/support: `/docs`, `/help`, `/about`, `/contact`, `/404`.
+- Legal/checkout: `/privacy`, `/terms`, `/refund`, `/checkout/success`.
+- Localized pages: supported mirrors below `/zh/*`; source files are proof of the
+  exact mirrored set.
 
-| Path | Role | Fact boundary |
-| --- | --- | --- |
-| `src/pages/index.astro` | Home page and Zen Clear landing. | tracked source |
-| `src/pages/checkout/success.astro` | Static checkout return page for completed Creem purchases. | tracked source |
-| `src/layouts/SiteLayout.astro` | Shared document shell, footer, and metadata baseline. | tracked source |
-| `src/data/product.ts` | Zen Clear name, status, description, highlights, proof, download, and purchase copy. | tracked source |
-| `public/*` | Static public assets, icons, fonts, and product media. | tracked or untracked until added |
-| `docs/*` | Governance and content records. | tracked or modified tracked |
+Download and checkout links may target `apps/console` API routes. This does not
+move billing, license, update metadata, or download API ownership into the site.
 
-## Routes
+## Commands
 
-- `/`: Zen Clear landing page.
-- `/checkout/success`: static return page after a completed Creem checkout.
+- `npm run build --workspace @rustzen/site`
+- `npm run dev --workspace @rustzen/site`
+- `npm run preview --workspace @rustzen/site`
 
-Zen Clear purchase copy is owned by `src/data/product.ts`. The current public
-offer is Pro as an annual Creem subscription at `$10/year`, linking through
-`apps/console` at `/api/billing/checkout?product=rustzen-clear&source=site`.
-
-Zen Clear download copy is also owned by `src/data/product.ts`. The public
-download button links through `apps/console` at `/api/updates/download/latest`, which
-resolves the current package from the update manifest instead of hard-coding a
-specific release version.
-
-## Boundaries
-
-The site has no frontend/backend API contract in this repository. Pages are
-pre-rendered from `src/pages` and `src/data/product.ts` during the Astro static
-build.
-
-Do not introduce Rust service deployment assumptions here:
-
-- no `/opt/site`;
-- no systemd unit;
-- no Docker release rule;
-- no `target/site`;
-- no `apps/server` or `apps/web` migration;
-- no Tauri updater/signing/capabilities rules.
-
-Generated and local-only output must not become source truth:
-
-- `.vercel/` is ignored local deployment link metadata;
-- `.astro/`, `.next/`, `out/`, and `dist/` are ignored generated output or stale framework output;
-- source, docs, and public assets must be reviewed through Git.
+Rendered layout and live deployment remain `Not verified` without direct browser
+or deployment evidence.

@@ -2,7 +2,7 @@
 
 ## Scope
 
-`apps/site` is the Rustzen public website and product-site app inside `rustzen/rustzen-hub`.
+`apps/site` is the Rustzen public website and product-site app inside `idaibin/rustzen-hub`.
 
 It owns:
 

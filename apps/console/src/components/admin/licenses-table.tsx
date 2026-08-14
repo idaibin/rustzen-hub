@@ -6,6 +6,7 @@ import { ConfirmAction, type ServerAction } from './confirm-action';
 import { CopyButton } from './copy-button';
 import { DataTable, type Column } from './data-table';
 import { LicenseEditDialog } from './license-edit-dialog';
+import { licenseStatusTone } from './license-status';
 
 export type LicenseRowDTO = {
   id: string;
@@ -18,6 +19,7 @@ export type LicenseRowDTO = {
   provider: string;
   order: string;
   usage: string;
+  usedDevices: number;
   maxDevices: number;
   expires: string;
   expiresAtInput: string;
@@ -25,13 +27,6 @@ export type LicenseRowDTO = {
   created: string;
   createdSort: string;
 };
-
-function statusVariant(status: string) {
-  if (status === 'ACTIVE') return 'success';
-  if (status === 'EXPIRED') return 'warning';
-  if (status === 'REVOKED') return 'destructive';
-  return 'muted';
-}
 
 export function LicensesTable({
   rows,
@@ -61,7 +56,7 @@ export function LicensesTable({
     {
       key: 'status',
       header: 'Status',
-      cell: (r) => <Badge variant={statusVariant(r.status)}>{r.status}</Badge>,
+      cell: (r) => <Badge variant={licenseStatusTone(r.status)}>{r.status}</Badge>,
       sortValue: (r) => r.status,
     },
     { key: 'customer', header: 'Customer', cell: (r) => r.customer, sortValue: (r) => r.customer },
@@ -76,7 +71,7 @@ export function LicensesTable({
       ),
       sortValue: (r) => r.order,
     },
-    { key: 'usage', header: 'Devices', cell: (r) => r.usage, sortValue: (r) => r.usage },
+    { key: 'usage', header: 'Devices', cell: (r) => r.usage, sortValue: (r) => r.usedDevices },
     { key: 'expires', header: 'Expires', cell: (r) => r.expires, sortValue: (r) => r.expiresSort },
     { key: 'created', header: 'Created', cell: (r) => r.created, sortValue: (r) => r.createdSort },
     {

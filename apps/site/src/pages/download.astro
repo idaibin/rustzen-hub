@@ -1,0 +1,107 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Button from '../components/Button.astro';
+import { product } from '../data/product';
+import { getLocale, pick, type Locale } from '../i18n';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = getLocale(Astro.url.pathname) } = Astro.props;
+---
+
+<SiteLayout
+  title={pick(locale, 'Download Zen Clear — Rustzen', '下载 Zen Clear — Rustzen')}
+  description={pick(locale, 'Download the latest Zen Clear beta for macOS 13 and later.', '下载适用于 macOS 13 及更高版本的最新版 Zen Clear Beta。')}
+  locale={locale}
+>
+  <main class="page">
+    <header class="page-head">
+      <p class="eyebrow">{pick(locale, 'Download', '下载')}</p>
+      <h1>{pick(locale, 'Get Zen Clear for macOS', '获取 macOS 版 Zen Clear')}</h1>
+      <p>{pick(locale, product.description, product.descriptionZh)}</p>
+    </header>
+
+    <section class="glass download-card" aria-labelledby="download-title">
+      <div>
+        <p class="status">{pick(locale, product.status, product.statusZh)} · {product.download.version}</p>
+        <h2 id="download-title">{product.name}</h2>
+        <p>{pick(locale, product.trust, product.trustZh)}</p>
+      </div>
+      <Button variant="primary" href={product.download.href}>{pick(locale, product.download.label, product.download.labelZh)}</Button>
+    </section>
+
+    <section class="requirements glass-2" aria-labelledby="requirements-title">
+      <h2 id="requirements-title">{pick(locale, 'Requirements', '系统要求')}</h2>
+      <p>{pick(locale, 'Zen Clear supports macOS 13 Ventura and later on Apple silicon and Intel Macs.', 'Zen Clear 支持搭载 Apple 芯片或 Intel 处理器的 macOS 13 Ventura 及更高版本。')}</p>
+    </section>
+  </main>
+</SiteLayout>
+
+<style>
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: clamp(48px, 7vw, 92px) clamp(20px, 5vw, 72px);
+  }
+  .page-head {
+    max-width: 680px;
+    margin-bottom: 36px;
+  }
+  h1,
+  h2 {
+    margin: 0;
+    color: var(--ink);
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.04;
+  }
+  .page-head > p:not(.eyebrow),
+  .download-card p,
+  .requirements p {
+    color: var(--ink-2);
+  }
+  .page-head > p:not(.eyebrow) {
+    margin: 16px 0 0;
+    font-size: 1.1rem;
+  }
+  .download-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 30px;
+  }
+  .download-card h2 {
+    font-size: 1.35rem;
+  }
+  .download-card p {
+    margin: 8px 0 0;
+  }
+  .status {
+    margin: 0 0 14px !important;
+    color: var(--brand-600) !important;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .requirements {
+    margin-top: 18px;
+    padding: 24px 30px;
+    border-radius: var(--radius);
+  }
+  .requirements p {
+    margin: 8px 0 0;
+  }
+  @media (max-width: 640px) {
+    .download-card {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>

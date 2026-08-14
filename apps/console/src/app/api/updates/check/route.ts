@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { resolvePublishedUpdateManifestUrl } from '@/lib/update-manifest-source';
 import {
   isAllowedUpdateAssetPath,
   resolveUpdateProduct,
   updateBlobOrigin,
-  updateManifestUrl,
   type UpdateProductConfig,
 } from '@/lib/update-products';
 
 export const runtime = 'nodejs';
 
 const MANIFEST_FETCH_TIMEOUT_MS = 8_000;
+
+function decodedPathname(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return null;
+  }
+}
 
 async function fetchManifest(url: string) {
   const controller = new AbortController();
@@ -47,6 +55,7 @@ function proxiedDownloadUrl(
   request: NextRequest,
   assetUrl: string,
   product: UpdateProductConfig,
+  blobOrigin: string | null,
 ) {
   let parsed: URL;
   try {
@@ -55,13 +64,13 @@ function proxiedDownloadUrl(
     return assetUrl;
   }
 
-  const blobOrigin = updateBlobOrigin(product);
-  if (parsed.origin !== blobOrigin) {
+  if (!blobOrigin || parsed.origin !== blobOrigin) {
     return assetUrl;
   }
 
   const pathname = parsed.pathname.replace(/^\/+/, '');
-  if (!isAllowedUpdateAssetPath(pathname, product)) {
+  const decodedPath = decodedPathname(pathname);
+  if (!decodedPath || !isAllowedUpdateAssetPath(decodedPath, product)) {
     return assetUrl;
   }
 
@@ -80,6 +89,7 @@ function rewriteManifestDownloadUrls(
   request: NextRequest,
   manifest: unknown,
   product: UpdateProductConfig,
+  blobOrigin: string | null,
 ) {
   if (!manifest || typeof manifest !== 'object') {
     return manifest;
@@ -108,7 +118,7 @@ function rewriteManifestDownloadUrls(
         platform,
         {
           ...entry,
-          url: proxiedDownloadUrl(request, entry.url, product),
+          url: proxiedDownloadUrl(request, entry.url, product, blobOrigin),
         },
       ];
     }),
@@ -126,14 +136,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'unsupported_update_product' }, { status: 404 });
   }
 
-  const url = updateManifestUrl(product);
+  const url = await resolvePublishedUpdateManifestUrl(product);
+  if (!url) {
+    return NextResponse.json({ error: 'update_product_not_configured' }, { status: 503 });
+  }
+
   const result = await fetchManifest(url);
   if (result.ok) {
-    return NextResponse.json(rewriteManifestDownloadUrls(request, result.manifest, product), {
-      headers: {
-        'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+    return NextResponse.json(
+      rewriteManifestDownloadUrls(request, result.manifest, product, updateBlobOrigin(product, url)),
+      {
+        headers: {
+          'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+        },
       },
-    });
+    );
   }
 
   return NextResponse.json(

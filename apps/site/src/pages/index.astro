@@ -37,20 +37,20 @@ const values = [
 
 const openProjects = [
   {
-    name: 'rustzen-core',
-    href: 'https://github.com/rustzen/rustzen-core',
-    status: 'Shared Rust components',
-    statusZh: '共享 Rust 基础组件',
-    body: 'Shared Rust primitives and crates for common models, configuration, error handling, and engineering conventions.',
-    bodyZh: 'Rustzen 项目之间复用的 Rust 基础代码和 crate，用于沉淀通用模型、配置、错误处理和工程约定。',
-  },
-  {
     name: 'rustzen-admin',
-    href: 'https://github.com/rustzen/rustzen-admin',
+    href: 'https://github.com/idaibin/rustzen-admin',
     status: 'Web/Rust admin template',
     statusZh: 'Web/Rust 后台工程模板',
     body: 'A Web/Rust admin template with server, web app, shared crates, and deployment scripts.',
     bodyZh: '一个 Web/Rust 后台工程模板，包含服务端、前端、共享 crate 和部署脚本，可作为后台系统、控制台和内部工具的工程起点。',
+  },
+  {
+    name: 'rustzen-zipper',
+    href: 'https://github.com/idaibin/rustzen-zipper',
+    status: 'Release packaging tool',
+    statusZh: '发布打包工具',
+    body: 'A release packaging utility for creating repeatable zip archives in scripts and release flows.',
+    bodyZh: '用于脚本和发布流程的 zip 打包工具，适合构建可重复、可自动化的发布归档。',
   },
 ];
 ---
@@ -229,7 +229,7 @@ const openProjects = [
   }
 
   .open-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   }
 
   .open-card {

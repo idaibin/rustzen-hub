@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { ConfirmAction, type ServerAction } from './confirm-action';
 import { CopyButton } from './copy-button';
 import { DataTable, type Column } from './data-table';
+import { licenseStatusTone } from './license-status';
 
 export type DeviceRowDTO = {
   id: string;
@@ -14,19 +15,13 @@ export type DeviceRowDTO = {
   productName: string;
   status: string;
   usage: string;
+  usedDevices: number;
   appVersion: string;
   activated: string;
   activatedSort: string;
   lastSeen: string;
   lastSeenSort: string;
 };
-
-function statusVariant(status: string) {
-  if (status === 'ACTIVE') return 'success';
-  if (status === 'EXPIRED') return 'warning';
-  if (status === 'REVOKED') return 'destructive';
-  return 'muted';
-}
 
 export function DevicesTable({
   rows,
@@ -64,10 +59,10 @@ export function DevicesTable({
     {
       key: 'status',
       header: 'Status',
-      cell: (r) => <Badge variant={statusVariant(r.status)}>{r.status}</Badge>,
+      cell: (r) => <Badge variant={licenseStatusTone(r.status)}>{r.status}</Badge>,
       sortValue: (r) => r.status,
     },
-    { key: 'usage', header: 'Usage', cell: (r) => r.usage, sortValue: (r) => r.usage },
+    { key: 'usage', header: 'Usage', cell: (r) => r.usage, sortValue: (r) => r.usedDevices },
     { key: 'appVersion', header: 'App', cell: (r) => r.appVersion, sortValue: (r) => r.appVersion },
     { key: 'activated', header: 'Activated', cell: (r) => r.activated, sortValue: (r) => r.activatedSort },
     { key: 'lastSeen', header: 'Last seen', cell: (r) => r.lastSeen, sortValue: (r) => r.lastSeenSort },

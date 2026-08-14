@@ -3,21 +3,17 @@ import { redirect } from 'next/navigation';
 import {
   Activity,
   Boxes,
-  KeyRound,
-  LayoutDashboard,
   LogOut,
-  Rocket,
   ShieldCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { CommandPalette } from '@/components/admin/command-palette';
+import { adminNavigation, type AdminNavKey } from '@/components/admin/admin-navigation';
 import { ThemeToggle } from '@/components/admin/theme-toggle';
 import { ToasterProvider } from '@/components/admin/toaster';
 import { destroyAdminSession } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-
-type AdminNavKey = 'overview' | 'licenses' | 'versions';
 
 type AdminShellProps = {
   active: AdminNavKey;
@@ -33,36 +29,6 @@ type StatCardProps = {
   icon?: React.ReactNode;
   trend?: number[];
 };
-
-const navItems = [
-  {
-    key: 'overview',
-    href: '/dashboard',
-    label: 'Overview',
-    description: 'Products and API surface',
-    icon: LayoutDashboard,
-  },
-  {
-    key: 'licenses',
-    href: '/dashboard/licenses',
-    label: 'Licenses',
-    description: 'Keys, devices, limits',
-    icon: KeyRound,
-  },
-  {
-    key: 'versions',
-    href: '/dashboard/versions',
-    label: 'Versions',
-    description: 'Release metadata',
-    icon: Rocket,
-  },
-] satisfies Array<{
-  key: AdminNavKey;
-  href: string;
-  label: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-}>;
 
 async function logout() {
   'use server';
@@ -88,7 +54,7 @@ export function AdminShell({ active, title, description, children }: AdminShellP
             </div>
 
             <nav className="flex-1 space-y-1 px-3 py-4">
-              {navItems.map((item) => {
+              {adminNavigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.key === active;
 
@@ -96,6 +62,7 @@ export function AdminShell({ active, title, description, children }: AdminShellP
                   <Link
                     key={item.key}
                     href={item.href}
+                    aria-current={isActive ? 'page' : undefined}
                     className={cn(
                       'relative flex items-start gap-3 rounded-lg px-3 py-3 text-sm transition-colors',
                       isActive
@@ -150,7 +117,7 @@ export function AdminShell({ active, title, description, children }: AdminShellP
                 <CommandPalette />
                 <ThemeToggle />
                 <form action={logout}>
-                  <Button variant="outline" size="sm" type="submit">
+                  <Button aria-label="Sign out" variant="outline" size="sm" type="submit">
                     <LogOut className="h-3.5 w-3.5" />
                     <span className="hidden sm:inline">Sign out</span>
                   </Button>
@@ -159,7 +126,7 @@ export function AdminShell({ active, title, description, children }: AdminShellP
             </div>
 
             <nav className="flex gap-1 overflow-x-auto border-t border-border px-4 py-2 lg:hidden">
-              {navItems.map((item) => {
+              {adminNavigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.key === active;
 
@@ -167,6 +134,7 @@ export function AdminShell({ active, title, description, children }: AdminShellP
                   <Link
                     key={item.key}
                     href={item.href}
+                    aria-current={isActive ? 'page' : undefined}
                     className={cn(
                       'inline-flex h-9 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-medium',
                       isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground',
@@ -195,7 +163,7 @@ export function StatCard({ title, value, description, icon, trend }: StatCardPro
       <CardHeader className="flex-row items-start justify-between gap-4 space-y-0 pb-2">
         <div>
           <CardDescription className="text-xs font-medium uppercase tracking-wide">{title}</CardDescription>
-          <CardTitle className="mt-3 text-3xl">{value}</CardTitle>
+          <p className="mt-3 text-3xl font-semibold leading-none tracking-normal">{value}</p>
         </div>
         {icon ? <div className="rounded-lg bg-brand-100 p-2 text-brand-600">{icon}</div> : null}
       </CardHeader>
@@ -279,7 +247,7 @@ export function AdminSection({
       <CardHeader>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <CardTitle>{title}</CardTitle>
+            <h2 className="text-base font-semibold leading-none tracking-normal">{title}</h2>
             {description ? <CardDescription>{description}</CardDescription> : null}
           </div>
           {action ? <div className="shrink-0">{action}</div> : null}

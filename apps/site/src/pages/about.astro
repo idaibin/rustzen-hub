@@ -46,6 +46,13 @@ const pages = [
       <p class="eyebrow">Rustzen</p>
       <h1>{pick(locale, 'Open-source components, templates, and tools for developer workflows', '面向开发者工作流的开源组件、工程模板和实用工具')}</h1>
       <p class="lead">{pick(locale, 'Rustzen focuses on reusable foundations, engineering templates, and practical tools rather than packaging every project as a platform. Product content is kept on the Product page.', 'Rustzen 优先维护可复用的基础组件、工程模板和实用工具，而不是把所有内容包装成平台。产品内容单独放在 Product 页面。')}</p>
+      <p class="identity">
+        {pick(
+          locale,
+          'Rustzen is maintained by Bruce Dai (@idaibin). Maintainer contact: bruce@idaibin.dev. Product support: support@rustzen.dev.',
+          'Rustzen 由 Bruce Dai（@idaibin）维护。维护者联系邮箱：bruce@idaibin.dev。产品支持邮箱：support@rustzen.dev。'
+        )}
+      </p>
     </header>
 
     <section class="page-map" aria-label={pick(locale, 'Page content map', '页面内容说明')}>
@@ -77,6 +84,12 @@ const pages = [
     margin: 20px 0 0;
     color: var(--ink-2);
     font-size: 1.12rem;
+  }
+  .identity {
+    max-width: 760px;
+    margin: 18px 0 0;
+    color: var(--ink);
+    font-size: 1rem;
   }
   .page-map {
     display: grid;

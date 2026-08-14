@@ -7,6 +7,9 @@
 - `apps/site` owns the public website, product pages, download page, docs entry, and about page.
 - `apps/console` owns the admin console, dashboard, product/release/license surfaces, billing hooks, and related APIs.
 - `packages/*` is for shared assets only after a dependency is used across more than one app.
+- `contracts/*` is the versioned authority for product IDs, feature IDs,
+  entitlement protocols, and runtime policies. Product repositories may consume
+  immutable snapshots but must not redefine policy.
 
 This repository replaces the old split between `rustzen/rzen-portal` and `rustzen/rzen-platform`.
 

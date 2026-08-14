@@ -1,197 +1,46 @@
 # apps/console Project Map
 
-Status: current project map
-Date: 2026-06-25
-Project type: Peripheral Rustzen Platform
+The repository root [`docs/repo-map/README.md`](../../../docs/repo-map/README.md)
+owns cross-app navigation. This scoped map routes console work without persisting
+branch, dirty-tree, local database, or deployment snapshots.
 
-## Current Facts
+## Stack and owners
 
-Command evidence:
+- Next.js App Router, React, TypeScript, Tailwind CSS v4, and local source-owned UI
+  primitives.
+- `src/app` owns dashboard pages and API route registration.
+- `src/components/admin` owns console workflows and high-density composition.
+- `src/components/ui` owns business-neutral primitives.
+- `src/app/globals.css` adapts root [`DESIGN.md`](../../../DESIGN.md) semantics.
+- `prisma/schema.prisma` owns persisted product, license, device, release, and
+  billing data shape.
 
-- `git -C apps/console status --short --branch`: branch `main` clean and
-  synced with `origin/main` on 2026-06-30 after the local directory rename.
-- `git -C apps/console status --ignored --short`: `.env.local`, `.next/`,
-  `.vercel/`, and `node_modules/` are ignored/local-only.
-- The pre-cutover Vercel console project is still the source of production env
-  names and should be reused during the `rustzen-hub` migration to avoid
-  dropping database, Blob, Creem, admin, and license settings.
-- `pg_isready -h 127.0.0.1 -p 5432`: local Homebrew PostgreSQL accepts
-  connections.
-- `psql -h 127.0.0.1 -p 5432 -d rustzen_console_test`: local test database is
-  reachable as user `daibin`.
+## Shortest task routes
 
-## Stack
+| Task | Read in order |
+| --- | --- |
+| Dashboard UI | nearest `AGENTS.md` → `DESIGN.md` → target `src/app/dashboard` page → `src/components/admin` owner → `src/components/ui` primitive |
+| License/device workflow | dashboard licenses page → server action → `licenses-table.tsx` / `devices-table.tsx` → `license-status.ts` → dialog/table primitives |
+| Release UI/API | versions page → `tauri-release-upload.tsx` → upload/updater-only asset-resolve/publish API routes → `src/lib/{tauri-release,blob-release,minisign}.ts` |
+| API contract | route registration → owning `src/lib` service/schema → representative caller/test |
+| Database work | `.env.example` → `prisma/schema.prisma` → owning route/service → explicit local database gate |
 
-| Area | Evidence | Status |
-| --- | --- | --- |
-| Web framework | `package.json`, `src/app` | source |
-| Runtime | Next.js App Router, React, TypeScript | source |
-| Styling | Tailwind CSS via `postcss.config.mjs` plus `src/app/globals.css` | source |
-| Database | Prisma + PostgreSQL | source; local test DB verified |
-| Analytics | `@vercel/analytics` in `src/app/layout.tsx` | source |
-| Hosting target | target domain `console.rustzen.dev` | cutover target |
+## Reuse index
 
-## Package Manager And Commands
-
-`package-lock.json` and the root `package.json` workspaces field are the package-manager evidence.
-Commands below come from `package.json`.
-
-| Command | Script | Verification |
-| --- | --- | --- |
-| `npm run dev` | `next dev` | Not run in this pass |
-| `npm run build` | `node scripts/with-env.mjs prisma generate && next build` | Passed on 2026-06-16 |
-| `npm run start` | `next start` | Not run; requires prior build |
-| `npm run lint` | `eslint .` | Passed on 2026-06-16 |
-| `npm run db:generate` | `node scripts/with-env.mjs prisma generate` | Passed on 2026-06-15 |
-| `npm run db:push` | `node scripts/with-env.mjs prisma db push` | Passed against local `rustzen_console_test` on 2026-06-15 |
-| `npm run db:seed` | `node scripts/with-env.mjs node prisma/seed.mjs` | Passed against local `rustzen_console_test` on 2026-06-15 |
-| `npm run db:verify` | `node scripts/verify-db.mjs` | Passed against local `rustzen_console_test` on 2026-06-15 |
-| `npm run db:studio` | `node scripts/with-env.mjs prisma studio` | Not run |
-
-## Directory Map
-
-| Path | Purpose | Status |
-| --- | --- | --- |
-| `README.md` | Project overview and scope | source |
-| `.env.example` | Env-name reference | source |
-| `.gitignore` | Ignores dependencies, env, build output, `.vercel/` | source |
-| `package.json` | Next.js, Prisma, ESLint scripts and dependencies | source |
-| `postcss.config.mjs` | Tailwind CSS v4 PostCSS integration | source |
-| `scripts/with-env.mjs` | Loads `.env.local`/`.env` before Prisma CLI commands | source |
-| `scripts/verify-db.mjs` | Verifies database connection and table counts | source |
-| `prisma/schema.prisma` | Product/license/device/version/billing schema | source |
-| `prisma/seed.mjs` | Seeds `rustzen-clear` and `rustzen-clipboard` products | source |
-| `src/app/layout.tsx` | Root layout and Vercel Analytics | source |
-| `src/app/page.tsx` | Redirects `/` to `/dashboard` | source |
-| `src/app/login/page.tsx` | Username/password admin login with same-origin Server Action protection | source |
-| `src/app/dashboard/page.tsx` | Dashboard index | source |
-| `src/app/dashboard/licenses/page.tsx` | License and device management | source |
-| `src/app/dashboard/versions/page.tsx` | Release metadata management | source |
-| `src/app/api/**/route.ts` | Platform API routes | mixed tracked and untracked source candidates |
-| `src/lib/auth.ts` | Cookie session signing and password check | source |
-| `src/lib/license-server.ts` | Legacy license-server proxy helper | source |
-| `src/lib/license-api.ts` | Local license API token, status, and error helpers | untracked source candidate |
-| `src/lib/prisma.ts` | Prisma client singleton | source |
-| `.env.local` | Local secrets and test DB URL | ignored/local-only |
-| `.vercel/` | Local Vercel project link | ignored/local-only |
-| `.next/` | Local Next.js build output | ignored/local-only |
-| `node_modules/` | Local dependency install output | ignored/local-only |
-
-## API Routes
-
-| Route | File | Responsibility | Status |
+| Semantic job | Canonical owner | Representative consumers | Boundary |
 | --- | --- | --- | --- |
-| `POST /api/licenses/activate` | `src/app/api/licenses/activate/route.ts` | Local Prisma-backed license activation | modified tracked |
-| `GET /api/licenses/verify` | `src/app/api/licenses/verify/route.ts` | Verify token, license, and device binding | untracked source candidate |
-| `POST /api/licenses/refresh` | `src/app/api/licenses/refresh/route.ts` | Refresh license token and status | untracked source candidate |
-| `POST /api/licenses/deactivate` | `src/app/api/licenses/deactivate/route.ts` | Remove current device binding | untracked source candidate |
-| `GET /api/licenses/health` | `src/app/api/licenses/health/route.ts` | Local Prisma-backed license API health | untracked source candidate |
-| `GET /api/billing/checkout?product=rustzen-clear` | `src/app/api/billing/checkout/route.ts` | Create a billing checkout for Rustzen Clear Pro | untracked source candidate |
-| `POST /api/ls/activate` | `src/app/api/ls/activate/route.ts` | Legacy proxy activation request to external license server | source |
-| `GET /api/ls/health` | `src/app/api/ls/health/route.ts` | Legacy proxy external license-server health | source |
-| `GET /api/updates/check?product=<code>` | `src/app/api/updates/check/route.ts` | Product-isolated Tauri updater manifest endpoint for Rustzen Clear and Clipboard | source |
-| `GET /api/updates/download/latest?product=<code>&platform=darwin-universal` | `src/app/api/updates/download/[[...path]]/route.ts` | Product-isolated latest download resolver that reads the selected manifest and redirects manual downloads to the current DMG | source |
-| `GET /api/versions?product=<code>` | `src/app/api/versions/route.ts` | Latest release metadata by product/platform | source |
-| Billing provider webhook route | Provider webhook handler | Verify billing provider signatures and synchronize subscription-backed licenses | untracked source candidate |
-| `POST /api/webhooks/lemonsqueezy` | `src/app/api/webhooks/lemonsqueezy/route.ts` | Verify Lemon Squeezy signature and create billing/license records | source |
+| Console shell | `src/components/admin/admin-shell.tsx` (`AdminShell`) | dashboard layouts/pages | Reuse navigation, theme, content bounds, and command palette |
+| Data table | `src/components/admin/data-table.tsx` (`DataTable`) | licenses and devices | Reuse search/sort/pagination/export; columns remain feature-local |
+| Status badge | `src/components/ui/badge.tsx` + `src/components/admin/license-status.ts` | licenses and devices | Reuse root `DESIGN.md` safe/caution/danger semantics and one status mapping |
+| Modal surface | `src/components/ui/dialog.tsx` (`DialogSurface`) | license create/edit and confirmation | Reuse overlay, labeling, close affordance, geometry, and dismissal |
+| Feedback | `src/components/admin/toaster.tsx` | copy and server-action flows | Reuse current toast state owner |
 
-## Data Model
+## Commands and boundaries
 
-`prisma/schema.prisma` defines:
+- `npm run lint --workspace @rustzen/console`
+- `npm run build --workspace @rustzen/console`
+- `npm run test:console --workspace @rustzen/console`
 
-- `Product`
-- `License`
-- `LicenseDevice`
-- `AppVersion`
-- `BillingEvent`
-- `LicenseStatus`
-
-The datasource uses `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING`.
-Local schema push and read-only count verification passed against
-`rustzen_console_test` on 2026-06-15.
-
-## Environment Names
-
-From `.env.example`:
-
-- `POSTGRES_PRISMA_URL`
-- `POSTGRES_URL_NON_POOLING`
-- `POSTGRES_URL`
-- `NEXT_PUBLIC_APP_URL`
-- `NEXT_PUBLIC_SITE_URL`
-- `RUSTZEN_ADMIN_USERNAME`
-- `RUSTZEN_ADMIN_PASSWORD`
-- `RUSTZEN_ADMIN_SECRET`
-- `RUSTZEN_ADMIN_API_TOKEN`
-- `RUSTZEN_LICENSE_SERVER_URL`
-- `RUSTZEN_LICENSE_SERVER_TOKEN`
-- `LICENSE_JWT_SECRET`
-- `LEMONSQUEEZY_WEBHOOK_SECRET`
-- `CREEM_API_KEY`
-- `CREEM_WEBHOOK_SECRET`
-- `CREEM_RUSTZEN_CLEAR_PRODUCT_ID`
-- `CREEM_CHECKOUT_SUCCESS_URL`
-- `RUSTZEN_CLEAR_UPDATE_MANIFEST_URL`
-- `RUSTZEN_CLEAR_UPDATE_BLOB_ORIGIN`
-- `RUSTZEN_CLIPBOARD_UPDATE_MANIFEST_URL`
-- `RUSTZEN_CLIPBOARD_UPDATE_BLOB_ORIGIN`
-
-Live billing product identifierentifiers are runtime configuration and must be provided
-through `CREEM_RUSTZEN_CLEAR_PRODUCT_ID`; live values must not be committed.
-
-The intended production domains are `https://console.rustzen.dev` for the
-dashboard/API and `https://rustzen.dev` for public checkout return links.
-Live Vercel env names and grouping were verified on 2026-07-01; secret values
-remain Vercel-only and must not be committed.
-
-## High-Risk Areas
-
-- Production deploys depend on the existing Vercel env set. Reuse or migrate it
-  explicitly before switching Git source or replacing the project.
-- Prisma schema changes affect production data and need an explicit migration
-  gate.
-- `npm run db:push` mutates the target database. Use only against local test DB
-  unless production approval is explicit.
-- Billing checkout depends on `CREEM_API_KEY`; webhook verification depends on
-  `CREEM_WEBHOOK_SECRET`.
-- Lemon Squeezy webhook verification depends on `LEMONSQUEEZY_WEBHOOK_SECRET`
-  for the legacy route.
-- Admin session signing depends on `RUSTZEN_ADMIN_SECRET`; the code contains a
-  development fallback for local use and throws in production when the secret is
-  missing.
-- Legacy license-server proxy requests depend on `RUSTZEN_LICENSE_SERVER_URL`
-  and optional bearer token.
-- Local Prisma-backed license routes run on the Node runtime and sign opaque
-  license bearer tokens with `LICENSE_JWT_SECRET`. Production fails closed when
-  no signing secret is configured.
-- `.env.local`, `.next/`, `.vercel/`, and `node_modules/` are ignored/local-only
-  and not committed deployment facts.
-- Vercel secret values, final domain propagation, and runtime limits are not
-  verified by committed source.
-
-## Recommended Reading Order
-
-For API work:
-
-1. `AGENTS.md`
-2. `.env.example`
-3. `prisma/schema.prisma`
-4. `src/lib/prisma.ts`
-5. The target `src/app/api/**/route.ts`
-6. `docs/architecture.md`
-
-For dashboard work:
-
-1. `AGENTS.md`
-2. `src/lib/auth.ts`
-3. `src/app/layout.tsx`
-4. The target `src/app/dashboard/**/page.tsx`
-5. `src/app/globals.css`
-
-For deploy/env work:
-
-1. `AGENTS.md`
-2. `docs/deployment.md`
-3. `.env.example`
-4. `package.json`
-5. `prisma/schema.prisma`
+Database mutation, deploys, environment changes, and webhooks require separate
+authorization. `.env*`, `.next`, `.vercel`, and `node_modules` are local/generated,
+not repository truth.

@@ -2,7 +2,7 @@
 
 ## Scope
 
-`apps/console` is the Rustzen admin console and API app inside `rustzen/rustzen-hub`.
+`apps/console` is the Rustzen admin console and API app inside `idaibin/rustzen-hub`.
 
 It owns:
 

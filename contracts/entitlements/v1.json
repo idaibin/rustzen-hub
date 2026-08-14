@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "contract_version": "1.0.0",
+  "status": "approved",
+  "authority": "idaibin/rustzen-hub",
+  "unknown_feature_behavior": "deny",
+  "guarantees": {
+    "continuous_network_required": false,
+    "backend_failure_preserves_free_features": true,
+    "entitlement_loss_deletes_user_data": false,
+    "products_release_independently": true
+  },
+  "products": [
+    {
+      "product_id": "rustzen-clear",
+      "runtime_entitlement": "active",
+      "policy_version": "clear-1",
+      "supported_contract_versions": {
+        "minimum": "1.0.0",
+        "maximum": "1.0.0"
+      },
+      "free_feature_ids": [
+        "scan",
+        "analyze",
+        "display",
+        "ai_scan",
+        "integrated_scan"
+      ],
+      "pro_feature_ids": [
+        "cleanup",
+        "batch_delete",
+        "reclaim",
+        "dev_cleanup",
+        "rules",
+        "advanced_config",
+        "restore_station",
+        "permanent_delete",
+        "development_scan_settings",
+        "scheduled_scan",
+        "custom_rules"
+      ],
+      "legacy_feature_aliases": {
+        "restore station": "restore_station",
+        "restore": "restore_station",
+        "development scan settings": "development_scan_settings",
+        "scheduled scan": "scheduled_scan",
+        "custom rules": "custom_rules"
+      },
+      "runtime_policy": {
+        "offline_grace_seconds": 1209600,
+        "validation_interval_seconds": 604800,
+        "clock_skew_tolerance_seconds": 0,
+        "cached_credential_verification": "signed_token_and_authenticated_encrypted_local_record",
+        "cache_corruption_behavior": "require_reactivation",
+        "grace_expiry_behavior": "lock_pro_features",
+        "confirmed_revocation_behavior": "lock_pro_features",
+        "backend_failure_behavior": "preserve_free_features_and_use_valid_cache_within_grace",
+        "activation_recovery": "replace_stale_or_corrupt_local_record_after_successful_activation",
+        "user_data_after_entitlement_loss": {
+          "read": "allowed",
+          "export": "not_implemented",
+          "delete": "user_controlled"
+        }
+      }
+    },
+    {
+      "product_id": "rustzen-clipboard",
+      "runtime_entitlement": "not_implemented",
+      "policy_version": "not-applicable",
+      "free_feature_ids": [],
+      "pro_feature_ids": []
+    },
+    {
+      "product_id": "rustzen-zipper",
+      "runtime_entitlement": "not_implemented",
+      "policy_version": "not-applicable",
+      "free_feature_ids": [],
+      "pro_feature_ids": []
+    }
+  ]
+}

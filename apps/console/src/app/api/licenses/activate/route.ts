@@ -18,9 +18,11 @@ import { z } from 'zod';
 
 export const runtime = 'nodejs';
 
+const LICENSE_KEY_MIN_LENGTH = 8;
+const LICENSE_KEY_MAX_LENGTH = 128;
 const activateSchema = z.object({
   product: z.string().min(1),
-  license_key: z.string().min(1),
+  license_key: z.string().trim().min(LICENSE_KEY_MIN_LENGTH).max(LICENSE_KEY_MAX_LENGTH),
   device_id: z.string().min(1),
   device_name: z.string().optional(),
   app_version: z.string().optional(),

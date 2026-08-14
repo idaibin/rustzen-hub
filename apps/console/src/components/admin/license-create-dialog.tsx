@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { DialogSurface } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
@@ -16,8 +17,18 @@ type LicenseCreateDialogProps = {
   createLicense: (formData: FormData) => void | Promise<void>;
 };
 
-function SubmitButton({ disabled }: { disabled: boolean }) {
+function SubmitButton({
+  disabled,
+  onPendingChange,
+}: {
+  disabled: boolean;
+  onPendingChange: (pending: boolean) => void;
+}) {
   const { pending } = useFormStatus();
+
+  useEffect(() => {
+    onPendingChange(pending);
+  }, [onPendingChange, pending]);
 
   return (
     <Button type="submit" disabled={disabled || pending}>
@@ -29,6 +40,7 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
 
 export function LicenseCreateDialog({ products, createLicense }: LicenseCreateDialogProps) {
   const [open, setOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const hasProducts = products.length > 0;
 
   return (
@@ -39,27 +51,18 @@ export function LicenseCreateDialog({ products, createLicense }: LicenseCreateDi
       </Button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4 py-6">
-          <div className="w-full max-w-2xl rounded-lg border border-border bg-card text-card-foreground shadow-xl">
-            <div className="flex items-start justify-between gap-4 border-b border-border p-5">
-              <div className="min-w-0">
-                <h2 className="text-lg font-semibold tracking-normal">Create license</h2>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  Issue a manual key for an existing product.
-                </p>
-              </div>
-              <Button
-                aria-label="Close create license dialog"
-                size="icon"
-                type="button"
-                variant="ghost"
-                onClick={() => setOpen(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <form action={createLicense} className="grid gap-4 p-5 sm:grid-cols-2">
+        <DialogSurface
+          title="Create license"
+          description="Issue a manual key for an existing product."
+          closeLabel="Close create license dialog"
+          closeDisabled={submitting}
+          onClose={() => setOpen(false)}
+        >
+          <form
+            action={createLicense}
+            className="grid gap-4 p-5 sm:grid-cols-2"
+            onSubmit={() => setSubmitting(true)}
+          >
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="create-license-product">Product</Label>
                 <Select id="create-license-product" name="product" required disabled={!hasProducts}>
@@ -100,14 +103,13 @@ export function LicenseCreateDialog({ products, createLicense }: LicenseCreateDi
               ) : null}
 
               <div className="flex justify-end gap-2 border-t border-border pt-4 sm:col-span-2">
-                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={submitting}>
                   Cancel
                 </Button>
-                <SubmitButton disabled={!hasProducts} />
+                <SubmitButton disabled={!hasProducts} onPendingChange={setSubmitting} />
               </div>
-            </form>
-          </div>
-        </div>
+          </form>
+        </DialogSurface>
       ) : null}
     </>
   );

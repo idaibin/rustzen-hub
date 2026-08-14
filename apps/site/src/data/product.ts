@@ -244,7 +244,7 @@ export const product = {
     'Cleanup is preview-first: scan results and explanations are shown before any cleanup runs.',
 } as const;
 
-export const githubUrl = 'https://github.com/rustzen';
+export const githubUrl = 'https://github.com/idaibin?tab=repositories';
 export const docsUrl = '/docs';
 
 export const products = [
@@ -260,6 +260,7 @@ export const products = [
     fit: 'For developers whose Mac fills up with generated project data.',
     fitZh: '适合经常被项目生成数据占满磁盘的开发者。',
     downloadHref: '',
+    githubHref: '',
     docsHref: '/products',
     accent: 'clear',
   },

@@ -20,6 +20,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { serializeCsvCell } from './data-table-utils';
 
 export type Column<T> = {
   key: string;
@@ -104,13 +105,9 @@ export function DataTable<T>({
 
   function exportCsv() {
     if (!exportSpec) return;
-    const esc = (value: unknown) => {
-      const s = String(value ?? '');
-      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-    };
-    const lines = [exportSpec.columns.map((c) => esc(c.header)).join(',')];
+    const lines = [exportSpec.columns.map((c) => serializeCsvCell(c.header)).join(',')];
     for (const row of rows) {
-      lines.push(exportSpec.columns.map((c) => esc(c.value(row))).join(','));
+      lines.push(exportSpec.columns.map((c) => serializeCsvCell(c.value(row))).join(','));
     }
     const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -131,6 +128,7 @@ export function DataTable<T>({
             <div className="relative w-full max-w-xs">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
+                aria-label="Search table"
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
@@ -145,9 +143,10 @@ export function DataTable<T>({
 
           <div className="ml-auto flex items-center gap-2">
             {densityToggle ? (
-              <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs">
+              <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs" role="group" aria-label="Table density">
                 <button
                   type="button"
+                  aria-pressed={density === 'comfortable'}
                   onClick={() => setDensity('comfortable')}
                   className={cn('px-2.5 py-1.5 transition-colors', density === 'comfortable' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent')}
                 >
@@ -155,6 +154,7 @@ export function DataTable<T>({
                 </button>
                 <button
                   type="button"
+                  aria-pressed={density === 'compact'}
                   onClick={() => setDensity('compact')}
                   className={cn('border-l border-border px-2.5 py-1.5 transition-colors', density === 'compact' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent')}
                 >
@@ -179,19 +179,25 @@ export function DataTable<T>({
               {columns.map((c) => (
                 <TableHead
                   key={c.key}
-                  className={cn(c.sortValue && 'cursor-pointer select-none', c.align === 'right' && 'text-right', c.className)}
-                  onClick={() => toggleSort(c.key)}
+                  aria-sort={c.sortValue ? (sortKey === c.key ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}
+                  className={cn(c.align === 'right' && 'text-right', c.className)}
                 >
-                  <span className={cn('inline-flex items-center gap-1', c.align === 'right' && 'flex-row-reverse')}>
-                    {c.header}
-                    {c.sortValue ? (
-                      sortKey === c.key ? (
+                  {c.sortValue ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleSort(c.key)}
+                      className={cn('inline-flex w-full items-center gap-1 rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-ring', c.align === 'right' && 'flex-row-reverse text-right')}
+                    >
+                      {c.header}
+                      {sortKey === c.key ? (
                         sortDir === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
                       ) : (
                         <ChevronsUpDown className="h-3 w-3 opacity-40" />
-                      )
-                    ) : null}
-                  </span>
+                      )}
+                    </button>
+                  ) : (
+                    c.header
+                  )}
                 </TableHead>
               ))}
             </TableRow>
@@ -227,10 +233,10 @@ export function DataTable<T>({
             Page {safePage + 1} of {pageCount}
           </span>
           <div className="flex gap-1">
-            <Button variant="outline" size="sm" type="button" disabled={safePage === 0} onClick={() => setPage(safePage - 1)}>
+            <Button aria-label="Previous page" variant="outline" size="sm" type="button" disabled={safePage === 0} onClick={() => setPage(safePage - 1)}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm" type="button" disabled={safePage >= pageCount - 1} onClick={() => setPage(safePage + 1)}>
+            <Button aria-label="Next page" variant="outline" size="sm" type="button" disabled={safePage >= pageCount - 1} onClick={() => setPage(safePage + 1)}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

@@ -22,6 +22,16 @@ async function main() {
       description: 'A local-first clipboard history app for macOS.',
     },
   });
+
+  await prisma.product.upsert({
+    where: { code: 'rustzen-zipper' },
+    update: {},
+    create: {
+      code: 'rustzen-zipper',
+      name: 'Rustzen Zipper',
+      description: 'A native archive utility for macOS.',
+    },
+  });
 }
 
 main()

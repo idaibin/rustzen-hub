@@ -1,11 +1,10 @@
 # apps/console Architecture
 
-Status: current architecture
-Date: 2026-06-16
+Status: current architecture; verify live source and root repo map for task-time state
 
 ## Classification
 
-`apps/console` is the local checkout for the `rustzen/rustzen-hub apps/console` admin app: Next.js App Router + Prisma +
+`apps/console` is the local checkout for the `idaibin/rustzen-hub apps/console` admin app: Next.js App Router + Prisma +
 PostgreSQL intended for Vercel.
 
 ## Responsibility
@@ -15,6 +14,7 @@ The platform surface owns:
 - Admin dashboard for products, licenses, devices, orders, and versions.
 - License activation backed by Prisma/PostgreSQL.
 - Release metadata lookup for desktop clients.
+- Authenticated upload and publication of pre-signed Tauri release artifacts.
 - Billing checkout and webhook ingestion for Rustzen Clear Pro subscriptions.
 - Legacy Lemon Squeezy webhook ingestion while the old route remains present.
 - Legacy proxy calls to an external license server when explicitly configured.
@@ -34,7 +34,7 @@ It must not own:
 | API routes | `src/app/api/**/route.ts` | source |
 | Auth/session | `src/lib/auth.ts` | source |
 | Database access | `src/lib/prisma.ts`, `prisma/schema.prisma` | source |
-| Billing checkout | `src/app/api/billing/checkout/route.ts`, provider helper library | untracked source candidate |
+| Billing checkout | `src/app/api/billing/checkout/route.ts` and its imported provider helpers | source |
 | Billing webhook | Provider webhook route and legacy Lemon Squeezy route | mixed source |
 | Deployment link | `.vercel/` | ignored/local-only |
 
@@ -123,7 +123,7 @@ File: `src/app/api/billing/checkout/route.ts`
 
 Creates a billing checkout session and redirects to the provider. The only
 supported public product is `product=rustzen-clear`. Source links should pass
-`source=site` when checkout is initiated by the public `rustzen/rustzen-hub apps/site` site.
+`source=site` when checkout is initiated by the public `idaibin/rustzen-hub apps/site` site.
 
 The route uses `CREEM_API_KEY`, `CREEM_RUSTZEN_CLEAR_PRODUCT_ID`, and
 `CREEM_CHECKOUT_SUCCESS_URL`. The product identifier is runtime configuration; if it is
@@ -156,6 +156,26 @@ File: `src/app/api/ls/health/route.ts`
 
 Calls the external license server path `/health` and returns the helper result.
 The HTTP status is `200` for successful upstream responses and `502` otherwise.
+
+### `GET /api/updates/check?product=<code>`
+
+Resolves Clear, Clipboard, or Zipper independently. The newest
+`AppVersion(platform="tauri-updater")` manifest URL takes precedence over the
+product-specific environment fallback. Blob asset URLs are rewritten through
+the guarded download route only when the product path and configured/derived
+origin both match.
+
+### `POST /api/releases/upload` and `POST /api/releases/publish`
+
+The dashboard uses Vercel Blob client uploads so signed archives and DMGs do not
+cross the Vercel Function request-size boundary. The token route requires an
+admin session, same-origin request, exact product/version pathname, supported
+asset type, and a newer version; tokens expire after ten minutes and cannot
+overwrite objects. Publication reads the objects back from the configured Blob
+store, checks server metadata, and verifies the updater archive against the
+product's embedded Minisign public key. It then writes an immutable version
+manifest and activates it in a serializable transaction only when its SemVer is
+newer. Signing private keys remain product-owned and never enter the console.
 
 ### `GET /api/versions`
 
@@ -210,7 +230,8 @@ expired.
   API health surfaces. Orders currently route through the license view; there is
   no separate order or webhook-event dashboard page yet.
 - `/dashboard/licenses` creates/revokes licenses and unbinds devices.
-- `/dashboard/versions` upserts release metadata by product/version/platform.
+- `/dashboard/versions` uploads pre-signed Tauri artifacts or separately upserts
+  metadata by product/version/platform.
 - Desktop-client API routes rely on license-key activation and the signed
   license bearer token returned by activation; operational health/legacy proxy
   routes require `RUSTZEN_ADMIN_API_TOKEN`.
@@ -225,7 +246,7 @@ Prisma models:
 - `AppVersion`: release metadata for update checks.
 - `BillingEvent`: webhook/event archive.
 
-The seed creates `rustzen-clear` and `rustzen-clipboard` products. Local
+The seed creates `rustzen-clear`, `rustzen-clipboard`, and `rustzen-zipper` products. Local
 `npm run db:push`, `npm run db:seed`, and `npm run db:verify` passed against Homebrew
 PostgreSQL database `rustzen_console_test` on 2026-06-15.
 
