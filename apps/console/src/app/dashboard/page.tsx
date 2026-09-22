@@ -193,9 +193,9 @@ async function OverviewContent() {
   return (
     <div className="space-y-6">
       {data.loadError ? (
-        <Alert className="border-danger/25 bg-danger/5 text-danger">
+        <Alert variant="danger">
           <AlertTitle>Database read failed</AlertTitle>
-          <AlertDescription className="text-danger/80">{data.loadError}</AlertDescription>
+          <AlertDescription>{data.loadError}</AlertDescription>
         </Alert>
       ) : null}
 

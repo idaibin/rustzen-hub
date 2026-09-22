@@ -97,9 +97,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             </CardHeader>
             <CardContent>
               {params.error ? (
-                <Alert className="mb-5 border-destructive/30 bg-destructive/5 text-destructive">
+                <Alert className="mb-5" variant="destructive">
                   <AlertTitle>Sign in failed</AlertTitle>
-                  <AlertDescription className="text-destructive/80">Invalid username or password.</AlertDescription>
+                  <AlertDescription>Invalid username or password.</AlertDescription>
                 </Alert>
               ) : null}
 

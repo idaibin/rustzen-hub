@@ -165,7 +165,7 @@ export function StatCard({ title, value, description, icon, trend }: StatCardPro
           <CardDescription className="text-xs font-medium uppercase tracking-wide">{title}</CardDescription>
           <p className="mt-3 text-3xl font-semibold leading-none tracking-normal">{value}</p>
         </div>
-        {icon ? <div className="rounded-lg bg-brand-100 p-2 text-brand-600">{icon}</div> : null}
+        {icon ? <div className="rounded-lg bg-secondary p-2 text-safe">{icon}</div> : null}
       </CardHeader>
       {description || (trend && trend.length > 1) ? (
         <CardContent className="pt-0">
@@ -191,8 +191,8 @@ function Sparkline({ values, className }: { values: number[]; className?: string
     <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" className={className} aria-hidden="true">
       <defs>
         <linearGradient id="rz-spark" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="var(--brand-600)" />
-          <stop offset="100%" stopColor="var(--brand-400)" />
+          <stop offset="0%" stopColor="var(--chart-line-start)" />
+          <stop offset="100%" stopColor="var(--chart-line-end)" />
         </linearGradient>
       </defs>
       <path

@@ -46,12 +46,31 @@ description: "Repository-owned shared visual semantics for the Rustzen public si
 - Console `DialogSurface` owns modal overlay, labeling, panel geometry, close affordance, and dismissal. Create, edit, and confirmation flows keep their business forms and actions local.
 - The command palette is a specialized search overlay with its own input/list composition; it reuses shared overlay semantics but is not a form or confirmation dialog variant.
 - Site and console components are not cross-framework source duplicates. Promote code to `packages/*` only after both applications have compatible live consumers.
+- Console ordinary action and navigation icons use `lucide-react` through the owning
+  UI or feature component. Icon-only controls keep their accessible name on the
+  enclosing control; brand/download assets remain separate. The Astro site keeps its
+  current repository-owned brand/SVG assets and does not adopt a React icon package.
+- Site and console use CSS for local hover, color, disclosure, and focus transitions.
+  No shared JavaScript animation engine is adopted. A future Motion dependency must
+  be justified by layout, enter/exit, state, or gesture behavior that CSS cannot own
+  cleanly, and must include reduced-motion handling at its application boundary.
+- `SiteLayout` and `AdminShell` are separate app-shell owners. Page headers, toolbars,
+  dialogs, and data tables keep their current responsibility names; visible product
+  copy must not silently rename route segments, permission identifiers, product IDs,
+  or contract keys.
 
 ## Naming & Placement
 
 - Astro route files are lowercase and follow URL segments; Astro reusable component files use PascalCase.
 - React/Next.js reusable component files use kebab-case and exported component symbols use PascalCase. Hooks use the `use-` filename prefix and `useX` symbols.
 - Status roles use `safe`, `caution`, and `danger` everywhere. App-specific framework aliases must map to, not rename, those semantics.
+
+## Console token and component adoption
+
+- `apps/console/design-system/tokens/*.tokens.json` owns the Console's serializable Primitive and Semantic token values. It is an implementation source for this visual authority, not a second visual-semantic authority and not a cross-project package.
+- `apps/console/scripts/build-design-tokens.mjs` is the named producer and validator. `apps/console/src/styles/generated/tokens.css` is its generated output and must not be edited manually.
+- Console business pages consume role-based Semantic tokens and repository-owned imports under `@/components/ui/<component>`. Foundation palette aliases are limited to the global Tailwind adapter and the owned UI component layer.
+- `apps/console/docs/ui/adoption.md` records the current basis, validator, drift policy, runtime evidence, and `Not verified` boundaries for this adoption.
 
 ## Do's and Don'ts
 

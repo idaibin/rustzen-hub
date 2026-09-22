@@ -291,9 +291,9 @@ export function TauriReleaseUpload({ products }: { products: ReleaseProduct[] })
           </div>
         ) : null}
         {error ? (
-          <Alert className="border-destructive/30 bg-destructive/5 text-destructive">
+          <Alert variant="destructive">
             <AlertTitle>Release publication failed</AlertTitle>
-            <AlertDescription className="text-destructive/80">{error}</AlertDescription>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         ) : null}
         <div className="flex flex-wrap gap-3">
@@ -387,9 +387,9 @@ export function TauriReleaseUpload({ products }: { products: ReleaseProduct[] })
           {submitting ? 'Uploading release…' : 'Upload and publish updater'}
         </Button>
         {error ? (
-          <Alert className="border-destructive/30 bg-destructive/5 text-destructive">
+          <Alert variant="destructive">
             <AlertTitle>Release upload failed</AlertTitle>
-            <AlertDescription className="space-y-3 text-destructive/80">
+            <AlertDescription className="space-y-3">
               <span className="block">{error}</span>
             </AlertDescription>
           </Alert>

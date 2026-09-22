@@ -1,0 +1,137 @@
+/**
+ * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY
+ * Generated deterministically from design-system/tokens/*.tokens.json
+ * Run: npm run tokens:build --workspace @rustzen/console
+ */
+
+:root {
+  color-scheme: light;
+
+  --accent: #e3edfd;
+  --accent-foreground: #2f63b0;
+  --ambient-a: rgba(211, 231, 253, 0.72);
+  --ambient-b: rgba(168, 203, 251, 0.38);
+  --background: #f7faff;
+  --border: #e3edfd;
+  --brand-100: #e3edfd;
+  --brand-200: #d3e7fd;
+  --brand-300: #a8cbfb;
+  --brand-400: #77a8f7;
+  --brand-50: #f3f7fe;
+  --brand-500: #4f8af3;
+  --brand-600: #3f7fd9;
+  --brand-700: #2f63b0;
+  --brand-800: #244783;
+  --brand-900: #1b2f56;
+  --card: #ffffff;
+  --card-foreground: #2f3e58;
+  --caution: #b58221;
+  --caution-foreground: #8a5d0f;
+  --caution-soft: rgba(181, 130, 33, 0.14);
+  --chart-line-end: #77a8f7;
+  --chart-line-start: #3f7fd9;
+  --control-height-default: 36px;
+  --control-height-lg: 40px;
+  --control-height-sm: 32px;
+  --danger: #e85a5a;
+  --danger-foreground: #bd3f3f;
+  --danger-soft: rgba(232, 90, 90, 0.12);
+  --destructive: #e85a5a;
+  --ease-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-standard: cubic-bezier(0.32, 0.72, 0, 1);
+  --foreground: #2f3e58;
+  --glass-1-bg: rgba(255, 255, 255, 0.78);
+  --glass-1-blur: 24px;
+  --glass-1-border: rgba(119, 168, 247, 0.32);
+  --glass-2-bg: rgba(255, 255, 255, 0.7);
+  --glass-2-blur: 20px;
+  --glass-2-border: rgba(119, 168, 247, 0.24);
+  --glass-3-bg: rgba(238, 244, 254, 0.82);
+  --glass-3-blur: 18px;
+  --glass-3-border: rgba(119, 168, 247, 0.2);
+  --ink: #2f3e58;
+  --ink-2: #60708a;
+  --ink-3: #8391a7;
+  --ink-4: #a7b5c8;
+  --input: #cfdcf2;
+  --line: #e3edfd;
+  --motion-base: 220ms;
+  --motion-fast: 140ms;
+  --motion-slow: 320ms;
+  --muted: #eef2f7;
+  --muted-foreground: #60708a;
+  --panel: #eef4fe;
+  --paper: #f7faff;
+  --popover: #ffffff;
+  --popover-foreground: #2f3e58;
+  --primary: #2f3e58;
+  --primary-foreground: #ffffff;
+  --radius: 14px;
+  --radius-scale-lg: 18px;
+  --radius-scale-md: 14px;
+  --radius-scale-sm: 10px;
+  --ring: #3f7fd9;
+  --rz-border: #e3edfd;
+  --rz-clear: #3f7fd9;
+  --rz-clipboard: #2f63b0;
+  --rz-ink: #2f3e58;
+  --rz-muted: #60708a;
+  --rz-page: #f7faff;
+  --rz-panel: #ffffff;
+  --safe: #3f7fd9;
+  --safe-foreground: #2f63b0;
+  --safe-soft: rgba(119, 168, 247, 0.16);
+  --secondary: #e3edfd;
+  --secondary-foreground: #244783;
+  --sidebar: #0f1830;
+  --sidebar-accent: rgba(119, 168, 247, 0.14);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(119, 168, 247, 0.16);
+  --sidebar-foreground: #e8eef9;
+  --sidebar-primary: #77a8f7;
+  --sidebar-primary-foreground: #0c1426;
+  --surface: #ffffff;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --accent: rgba(119, 168, 247, 0.16);
+  --accent-foreground: #d3e7fd;
+  --ambient-a: rgba(47, 99, 176, 0.3);
+  --ambient-b: rgba(31, 48, 86, 0.5);
+  --background: #0c1426;
+  --border: rgba(119, 168, 247, 0.16);
+  --card: #111c36;
+  --card-foreground: #e8eef9;
+  --caution-foreground: #f2c96d;
+  --danger-foreground: #ffaaaa;
+  --destructive: #ff8a8a;
+  --foreground: #e8eef9;
+  --glass-1-bg: rgba(255, 255, 255, 0.05);
+  --glass-1-border: rgba(119, 168, 247, 0.2);
+  --glass-2-bg: rgba(255, 255, 255, 0.04);
+  --glass-2-border: rgba(119, 168, 247, 0.14);
+  --glass-3-bg: rgba(255, 255, 255, 0.03);
+  --ink: #e8eef9;
+  --ink-2: #aebbd2;
+  --ink-3: #8595ad;
+  --ink-4: #5e6c84;
+  --input: rgba(119, 168, 247, 0.24);
+  --line: rgba(119, 168, 247, 0.16);
+  --muted: #0f1830;
+  --muted-foreground: #aebbd2;
+  --panel: #0f1830;
+  --paper: #0c1426;
+  --popover: #111c36;
+  --popover-foreground: #e8eef9;
+  --primary: #e8eef9;
+  --primary-foreground: #0c1426;
+  --ring: #77a8f7;
+  --safe-foreground: #8dbbff;
+  --secondary: rgba(119, 168, 247, 0.14);
+  --secondary-foreground: #d3e7fd;
+  --sidebar: #0a1120;
+  --sidebar-border: rgba(119, 168, 247, 0.12);
+  --surface: #111c36;
+}

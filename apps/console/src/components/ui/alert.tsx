@@ -1,14 +1,24 @@
 import * as React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-export function Alert({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      role="alert"
-      className={cn('rounded-lg border border-border bg-card p-4 text-sm text-card-foreground', className)}
-      {...props}
-    />
-  );
+const alertVariants = cva('rounded-lg border p-4 text-sm transition-colors', {
+  variants: {
+    variant: {
+      default: 'border-border bg-card text-card-foreground',
+      destructive: 'border-destructive/30 bg-destructive/5 text-destructive',
+      danger: 'border-danger/30 bg-danger/5 text-danger',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+export type AlertProps = React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>;
+
+export function Alert({ className, variant, ...props }: AlertProps) {
+  return <div role="alert" className={cn(alertVariants({ variant }), className)} {...props} />;
 }
 
 export function AlertTitle({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
@@ -16,5 +26,5 @@ export function AlertTitle({ className, ...props }: React.HTMLAttributes<HTMLDiv
 }
 
 export function AlertDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn('leading-6 text-muted-foreground', className)} {...props} />;
+  return <p className={cn('leading-6 opacity-80', className)} {...props} />;
 }

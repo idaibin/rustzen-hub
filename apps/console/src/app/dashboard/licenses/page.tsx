@@ -222,9 +222,9 @@ export default async function LicensesPage() {
     >
       <div className="space-y-6">
         {loadError ? (
-          <Alert className="border-danger/25 bg-danger/5 text-danger">
+          <Alert variant="danger">
             <AlertTitle>Database read failed</AlertTitle>
-            <AlertDescription className="text-danger/80">
+            <AlertDescription>
               {loadError}
               <span className="mt-2 block">
                 Check production PostgreSQL env values and whether the Prisma schema has been applied.
