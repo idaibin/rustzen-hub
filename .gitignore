@@ -13,3 +13,6 @@ out/
 
 *.log
 .DS_Store
+
+# Local UI verification evidence may contain machine paths or captured app state.
+.codex/artifacts/
